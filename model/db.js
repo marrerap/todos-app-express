@@ -3,7 +3,7 @@ const db = {
         {
             id: 1,
             text: "Buy Milk",
-            completed: false,
+            completed: true,
         },
         {
             id: 2,
