@@ -1,9 +1,9 @@
-// const { json } = require("express")
+
 
 function renderTodos(todosArray) {
     const todosHtmlArray = todosArray.map(todo => {
         return `<li class="${todo.completed ? 'completed' : 'incomplete'}"> ${todo.text}</li><br>
-        <button class="delete-button" data-id="${todo.id}">Delete</button>
+        <button class="delete-button" data-id="${todo.id} data-completed="${todo.completed ? 'completed' : 'incomplete'}">Delete</button>
         <button class="toggle-complete" data-id="${todo.id}" >Completed?</button>`
     })
     return todosHtmlArray.join('')
@@ -34,7 +34,7 @@ todoForm.addEventListener('submit', (e) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: json.stringify({
+        body: JSON.stringify({
             text: todoText.value
         })
     })
@@ -67,13 +67,14 @@ document.addEventListener('click', (e) => {
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('toggle-complete')) {
         const id = e.target.dataset.id
+        const completed = e.target.dataset.completed;
         fetch(`/api/v1/todos/${id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                completed: true
+                completed: completed === 'completed' ? false : true
             })
             
         })
