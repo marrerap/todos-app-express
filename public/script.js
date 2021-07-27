@@ -2,9 +2,11 @@
 
 function renderTodos(todosArray) {
     const todosHtmlArray = todosArray.map(todo => {
-        return `<li class="${todo.completed ? 'completed' : 'incomplete'}"> ${todo.text}</li><br>
-        <button class="delete-button" data-id="${todo.id} data-completed="${todo.completed ? 'completed' : 'incomplete'}">Delete</button>
-        <button class="toggle-complete" data-id="${todo.id}" >Completed?</button>`
+        return `<li class="${todo.completed ? 'completed' : 'incomplete'}"></li><input class="edit-field" type="text" id="edit-${todo.id}"value="${todo.text}"></input></li> 
+
+        <button class="delete-button" data-id="${todo.id} data-completed="${todo.completed ? 'completed' : 'incomplete'}">X</button>
+        <button class="toggle-complete" data-id="${todo.id}" >-</button>
+        <button class="update-button" data-id="${todo.id}" >edit</button>`
     })
     return todosHtmlArray.join('')
 }
@@ -44,6 +46,7 @@ todoForm.addEventListener('submit', (e) => {
             todoForm.reset
         })
 })
+
 
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('delete-button')) {
@@ -89,5 +92,30 @@ document.addEventListener('click', (e) => {
             })
 
 
+    }
+})
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('update-button')) {
+        const id = e.target.dataset.id
+        const editText = document.getElementById(`edit-${id}`);
+        fetch(`/api/v1/todos/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: editText.value
+            })
+            
+        })
+            .then(res => !res.ok &&
+                res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error)
+                }
+                fetchTodos()
+
+            })
     }
 })
